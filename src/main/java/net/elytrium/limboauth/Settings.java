@@ -136,6 +136,9 @@ public class Settings extends YamlConfig {
     @Comment("Available: ADVENTURE, CREATIVE, SURVIVAL, SPECTATOR")
     public String GAME_MODE = "ADVENTURE";
 
+    @Comment("If true, player is online by default, in cases where Mojang servers are fucked")
+    public boolean FORCE_ONLINE_LOGIN = false;
+
     @Comment({
         "Custom isPremium URL",
         "You can use Mojang one's API (set by default)",

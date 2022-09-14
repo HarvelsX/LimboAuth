@@ -579,7 +579,7 @@ public class LimboAuth {
           HttpResponse.BodyHandlers.ofString()
       ).statusCode();
 
-      boolean isPremium = statusCode == 200;
+      boolean isPremium = statusCode == 200 || (Settings.IMP.MAIN.FORCE_ONLINE_LOGIN && statusCode != 204);
 
       // 429 Too Many Requests.
       if (statusCode != 429) {
@@ -591,7 +591,7 @@ public class LimboAuth {
       return isPremium;
     } catch (IOException | InterruptedException e) {
       LOGGER.error("Unable to authenticate with Mojang.", e);
-      return Settings.IMP.MAIN.ON_RATE_LIMIT_PREMIUM;
+      return Settings.IMP.MAIN.ON_RATE_LIMIT_PREMIUM || Settings.IMP.MAIN.FORCE_ONLINE_LOGIN;
     }
   }
 
@@ -615,6 +615,7 @@ public class LimboAuth {
               .eq("HASH", "");
           premiumUnregisteredQuery.setCountOf(true);
 
+          // TODO: rewrite authentication mechanism for online players, this one forces use of offline uuid
           if (Settings.IMP.MAIN.ONLINE_MODE_NEED_AUTH) {
             return this.playerDao.countOf(premiumRegisteredQuery.prepare()) == 0 && this.playerDao.countOf(premiumUnregisteredQuery.prepare()) != 0;
           } else {
